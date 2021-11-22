@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import UserModel from "../models/User";
+import bcrypt from "bcrypt";
 
 export const create = (req: Request, res: Response) => {
     UserModel.create(req.body)

@@ -1,40 +1,44 @@
-import { prop, getModelForClass } from "@typegoose/typegoose";
+import { Field, ID, InputType, ObjectType } from "type-graphql";
+import { BaseEntity, Column, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { SampleCoverLetter, SampleCoverLetterInput } from "./SampleCoverLetter";
 
-export class User {
-    
-    @prop({ required: true, unique: true })
-    private username: string;
+@ObjectType()
+export class User extends BaseEntity {
+  @Field(() => ID)
+  @PrimaryGeneratedColumn()
+  id!: number;
 
-    @prop({ required: true })
-    private password: string;
+  @Field()
+  @Column()
+  username!: string;
 
-    constructor(username: string, password: string)
-    {
-        this.username = username;
-        this.password = password;
-    };
+  @Field()
+  @Column()
+  password!: string;
 
-       public get Username(): string
-    {
-        return this.username;
-    }
-
-    public set Username(username: string)
-    {
-        this.username = username;
-    }
-
-    public get Password(): string
-    {
-        return this.password;
-    }
-
-    public set Password(password: string)
-    {
-        this.password = password;
-    }
+  @Field(() => [SampleCoverLetter])
+  @OneToMany(
+    () => SampleCoverLetter,
+    (sampleCoverLetter) => sampleCoverLetter.user
+  )
+  sampleCoverLetters?: SampleCoverLetter[];
 }
 
-const UserModel = getModelForClass(User);
+@InputType()
+export class UserInput extends BaseEntity {
+  
+  @Field()
+  @Column()
+  username!: string;
 
-export default UserModel;
+  @Field()
+  @Column()
+  password!: string;
+
+  @Field(() => [SampleCoverLetterInput])
+  @OneToMany(
+    () => SampleCoverLetter,
+    (sampleCoverLetter) => sampleCoverLetter.user
+  )
+  sampleCoverLetters!: SampleCoverLetter[];
+}
