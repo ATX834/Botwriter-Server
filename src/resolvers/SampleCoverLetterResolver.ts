@@ -12,7 +12,7 @@ export class SampleCoverLetterResolver {
   private SampleCoverLetterRepository = getRepository(SampleCoverLetter);
 
   @Query(() => [SampleCoverLetter])
-  async findAllSampleCoverLetters(): Promise<SampleCoverLetter[]> {
+  async getSampleCoverLetters(): Promise<SampleCoverLetter[]> {
     return await this.SampleCoverLetterRepository.find();
   }
 

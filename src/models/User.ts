@@ -1,8 +1,9 @@
 import { Field, ID, InputType, ObjectType } from "type-graphql";
-import { BaseEntity, Column, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { SampleCoverLetter, SampleCoverLetterInput } from "./SampleCoverLetter";
 
 @ObjectType()
+@Entity()
 export class User extends BaseEntity {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
@@ -16,7 +17,8 @@ export class User extends BaseEntity {
   @Column()
   password!: string;
 
-  @Field(() => [SampleCoverLetter])
+  @Field(() => [SampleCoverLetter], { nullable: true }
+  )
   @OneToMany(
     () => SampleCoverLetter,
     (sampleCoverLetter) => sampleCoverLetter.user
@@ -35,10 +37,10 @@ export class UserInput extends BaseEntity {
   @Column()
   password!: string;
 
-  @Field(() => [SampleCoverLetterInput])
+  @Field(() => [SampleCoverLetterInput], { nullable: true })
   @OneToMany(
     () => SampleCoverLetter,
     (sampleCoverLetter) => sampleCoverLetter.user
   )
-  sampleCoverLetters!: SampleCoverLetter[];
+  sampleCoverLetters?: SampleCoverLetter[];
 }

@@ -1,18 +1,33 @@
-// import { mongoose } from "@typegoose/typegoose";
-// import express from "express";
-// import cors from "cors";
-// import UserRouter from "./routes/User";
-
-// mongoose.connect(config.mongo_url).then(() => console.log("Connect to db"));
-
-// app.use(cors);
-// app.use(express.json());
-// app.use("api/user/", UserRouter);
-
-// app.listen(config.port, () =>
-//   console.log(`Server is running on ${config.port}`)
-// );
 import "reflect-metadata";
-import { bootstrap } from "./config/config";
+import path from "path";
+import { ApolloServer } from "apollo-server";
+import { createConnection } from "typeorm";
+import { buildSchema } from "type-graphql";
+import { UserResolver } from "./resolvers/UserResolver";
+import { SampleCoverLetterResolver } from "./resolvers/SampleCoverLetterResolver";
+import { config } from "./config/config";
+import bcrypt from "bcryptjs"
+
+export async function bootstrap() {
+  await createConnection({
+    type: config.server as "mysql",
+    url: `${config.server}://${config.db_uname}:${config.db_password}@${config.host}/${config.db}`,
+    entities: [path.resolve(__dirname,'./models/*.{ts,js}')],
+    synchronize: true,
+  });
+
+  const schema = await buildSchema({
+    resolvers: [UserResolver, SampleCoverLetterResolver],
+  });
+
+  const server = new ApolloServer({
+    schema,
+  });
+
+  const { url } = await server.listen(config.port);
+  console.log(`Server is running, GraphQL Playground available at ${url}`);
+  let hash = await bcrypt.hash("lololol", bcrypt.genSaltSync(14));
+  console.log(hash)
+}
 
 bootstrap();
