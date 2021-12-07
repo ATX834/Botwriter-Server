@@ -1,10 +1,12 @@
+import dotenv from "dotenv";
 
-export const config =  
-{
-  'server' : "mysql",
-  'host' : "localhost",
-  'db' : "genLDM",
-  'db_uname' : "root",
-  'db_password' : "password",
-  'port' : 4000
-}
+dotenv.config();
+
+export const config = {
+  server: process.env.SERVER,
+  host: process.env.DB_HOST,
+  db: process.env.DB,
+  db_uname: process.env.DB_USER,
+  db_password: process.env.DB_PASSWORD,
+  port: process.env.PORT,
+};
