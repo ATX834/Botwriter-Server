@@ -26,8 +26,8 @@ export async function bootstrap() {
 
   const { url } = await server.listen(config.port);
   console.log(`Server is running, GraphQL Playground available at ${url}`);
-  let hash = await bcrypt.hash("lololol", bcrypt.genSaltSync(14));
-  console.log(hash)
+  // let hash = await bcrypt.hash("lololol", bcrypt.genSaltSync(14));
+  // console.log(hash)
 }
 
 bootstrap();

@@ -4,7 +4,7 @@ import { SampleCoverLetter, SampleCoverLetterInput } from "./SampleCoverLetter";
 
 @ObjectType()
 @Entity()
-export class Variable extends BaseEntity {
+export class Hook extends BaseEntity {
     @PrimaryGeneratedColumn()
     id!: number;
 
@@ -16,12 +16,12 @@ export class Variable extends BaseEntity {
     @Column()
     value!: string;
 
-    @ManyToMany(() => SampleCoverLetter, sampleCoverLetter => sampleCoverLetter.variables)
+    @ManyToMany(() => SampleCoverLetter, sampleCoverLetter => sampleCoverLetter.hooks)
     sampleCoverLetters!: SampleCoverLetter[];
 }
 
 @InputType()
-export class VariableInput {
+export class HookInput {
     @Field()
     @Column()
     title!: string;
@@ -31,6 +31,6 @@ export class VariableInput {
     value!: string;
 
     @Field(() => [SampleCoverLetterInput])
-    @ManyToMany(() => SampleCoverLetter, sampleCoverLetter => sampleCoverLetter.variables)
+    @ManyToMany(() => SampleCoverLetter, sampleCoverLetter => sampleCoverLetter.hooks)
     sampleCoverLetters!: SampleCoverLetter[];
 }

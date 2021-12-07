@@ -1,7 +1,7 @@
 import { Field, ID, InputType, ObjectType } from "type-graphql";
 import { BaseEntity, Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User, UserInput } from "./User";
-import { Variable, VariableInput } from "./Variable";
+import { Hook, HookInput } from "./Hook";
 
 @ObjectType()
 @Entity()
@@ -18,9 +18,9 @@ export class SampleCoverLetter extends BaseEntity{
     @Column()
     text!: string;
   
-    @Field(() => [Variable])
-    @ManyToMany(() => Variable, variable => variable.sampleCoverLetters)
-    variables!: Variable[];
+    @Field(() => [Hook])
+    @ManyToMany(() => Hook, hook => hook.sampleCoverLetters)
+    hooks!: Hook[];
 
     @Field(() => User)
     @ManyToOne(() => User, user => user.sampleCoverLetters)
@@ -37,9 +37,9 @@ export class SampleCoverLetterInput {
     @Column()
     text!: string;
   
-    @Field(() => [VariableInput])
-    @ManyToMany(() => Variable, variable => variable.sampleCoverLetters)
-    variables!: Variable[];
+    @Field(() => [HookInput])
+    @ManyToMany(() => Hook, hook => hook.sampleCoverLetters)
+    hooks!: Hook[];
 
     @Field(() => UserInput)
     @ManyToOne(() => User, user => user.sampleCoverLetters)
