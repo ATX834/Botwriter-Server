@@ -1,6 +1,6 @@
 import { Field, ID, InputType, ObjectType } from "type-graphql";
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { SampleCoverLetter, SampleCoverLetterInput } from "./SampleCoverLetter";
+import { SampleLetter } from "./SampleLetter";
 
 @ObjectType()
 @Entity()
@@ -17,18 +17,19 @@ export class User extends BaseEntity {
   @Column()
   password!: string;
 
-  @Field(() => [SampleCoverLetter], { nullable: true }
+  @Field(() => [SampleLetter], { nullable: true }
   )
   @OneToMany(
-    () => SampleCoverLetter,
-    (sampleCoverLetter) => sampleCoverLetter.user
+    () => SampleLetter,
+    (sampleLetter) => sampleLetter.user
+    , { eager: true }
   )
-  sampleCoverLetters?: SampleCoverLetter[];
+  sampleLetters?: SampleLetter[];
 }
 
 @InputType()
 export class UserInput extends BaseEntity {
-  
+
   @Field()
   @Column()
   username!: string;
@@ -36,11 +37,18 @@ export class UserInput extends BaseEntity {
   @Field()
   @Column()
   password!: string;
+}
+@InputType()
+export class UserUpdateInput extends BaseEntity {
 
-  @Field(() => [SampleCoverLetterInput], { nullable: true })
-  @OneToMany(
-    () => SampleCoverLetter,
-    (sampleCoverLetter) => sampleCoverLetter.user
-  )
-  sampleCoverLetters?: SampleCoverLetter[];
+  @Field({ nullable: true })
+  @Column()
+  username!: string;
+}
+@InputType()
+export class ResetPasswordInput extends BaseEntity {
+
+  @Field({ nullable: true })
+  @Column()
+  password!: string;
 }
