@@ -52,7 +52,7 @@ export class SampleLetterResolver {
     @Arg("sampleLetterId", () => ID) id: number
   ): Promise<SampleLetter | void> {
 
-    let sampleLetter = await this.sampleLetterRepository.findOne(id);
+    const sampleLetter = await this.sampleLetterRepository.findOne(id);
 
     if (!sampleLetter) return null;
 
@@ -68,6 +68,7 @@ export class SampleLetterResolver {
   async removeSampleLetter(
     @Arg("id", () => ID) id: number,
   ): Promise<SampleLetter | void> {
+
     const sampleLetter = await this.sampleLetterRepository.findOne(id);
 
     return sampleLetter ?

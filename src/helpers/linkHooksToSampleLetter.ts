@@ -1,8 +1,9 @@
 import { getRepository } from "typeorm";
 import { Hook } from "../models/Hook";
+import { InsertHookSampleLetterQuery } from "../types/InsertHookSampleLetterQuery";
 
-export default function linkHooksToSampleLetter(hooks: Hook[], sLetterId: number, insertIntoHookSampleLetterTable: Function) {
-    
+export default function linkHooksToSampleLetter(hooks: Hook[], sampleLetterId: number, insertIntoHookSampleLetterTable: InsertHookSampleLetterQuery) {
+
     const hookRepository = getRepository(Hook)
 
     hooks.forEach(async (hook: Hook) => {
@@ -15,6 +16,6 @@ export default function linkHooksToSampleLetter(hooks: Hook[], sLetterId: number
 
         }
 
-        await insertIntoHookSampleLetterTable(sLetterId, dbHook.id);
+        await insertIntoHookSampleLetterTable(sampleLetterId, dbHook.id);
     })
 }

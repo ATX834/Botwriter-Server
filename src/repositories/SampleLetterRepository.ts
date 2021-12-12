@@ -1,11 +1,12 @@
 import { EntityRepository, Repository } from "typeorm";
 import { getConnection, InsertResult } from "typeorm";
 import { SampleLetter } from "../models/SampleLetter";
+import { InsertHookSampleLetterQuery } from "../types/InsertHookSampleLetterQuery";
 
 @EntityRepository(SampleLetter)
 export class SampleLetterRepository extends Repository<SampleLetter> {
 
-    async insertIntoHookSampleLetterTable(sampleLetterId: number, hookId: number): Promise<InsertResult | void> {
+    insertIntoHookSampleLetterTable:InsertHookSampleLetterQuery = async (sampleLetterId: number, hookId: number): Promise<InsertResult | void> => {
         return getConnection()
             .createQueryBuilder()
             .insert()
@@ -13,6 +14,6 @@ export class SampleLetterRepository extends Repository<SampleLetter> {
             .values([{ sampleLetterId: sampleLetterId, hookId: hookId }])
             .execute()
             .catch((err) => console.log(err));
-    }
 
+    }
 }
