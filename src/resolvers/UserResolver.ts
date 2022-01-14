@@ -1,6 +1,7 @@
-import { Query, Resolver, Mutation, Arg, ID } from "type-graphql";
+import { Query, Resolver, Mutation, Arg, ID, Authorized, Ctx } from "type-graphql";
 import { getRepository } from "typeorm";
 import bcrypt from "bcryptjs";
+import jwt from 'jsonwebtoken';
 
 import { ResetPasswordInput, User, UserInput, UserUpdateInput } from "../models/User";
 
@@ -20,7 +21,7 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  async createUser(@Arg("data") newUserData: UserInput): Promise<User> {
+  async signup(@Arg("data") newUserData: UserInput): Promise<User> {
     newUserData.password = await bcrypt.hash(
       newUserData.password,
       bcrypt.genSaltSync(14)
@@ -74,5 +75,25 @@ export class UserResolver {
     }
     return null;
   }
-}
 
+  @Mutation(() => String, { nullable: true })
+  async login(@Arg('username') username: string, @Arg('password') password: string): Promise<string | null> {
+    let user = await this.userRepository.findOne({ username });
+    if (user) {
+      if (await bcrypt.compare(password, user.password)) {
+        const token = jwt.sign({ username: user.username, id: user.id, password: user.password }, 'secret-key');
+        return token;
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+  // @Authorized()
+  // @Query(() => User)
+  // async getProfile(@Ctx() context: { user: User }): Promise<User | null> {
+  //   const user = context.user;
+  //   return await this.userRepository.findOne(user.id);
+  // }
+}
