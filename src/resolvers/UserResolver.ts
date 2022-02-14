@@ -81,7 +81,7 @@ export class UserResolver {
     let user = await this.userRepository.findOne({ username });
     if (user) {
       if (await bcrypt.compare(password, user.password)) {
-        const token = jwt.sign({ username: user.username, id: user.id, password: user.password }, 'secret-key');
+        const token = jwt.sign({ username: user.username, id: user.id }, 'secret-key');
         return token;
       } else {
         return null;
