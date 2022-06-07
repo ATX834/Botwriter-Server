@@ -1,8 +1,8 @@
 import { Field, ID, InputType, ObjectType } from "type-graphql";
-import { BaseEntity, Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
-import { User, UserInput } from "./User";
-import { Hook, HookInput } from "./Hook";
+import { User } from "./User";
+import { Hook } from "./Hook";
 
 @ObjectType()
 @Entity()

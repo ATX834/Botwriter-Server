@@ -1,5 +1,12 @@
+import { IsEmail } from "class-validator";
 import { Field, ID, InputType, ObjectType } from "type-graphql";
-import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { SampleLetter } from "./SampleLetter";
 
 @ObjectType()
@@ -10,29 +17,46 @@ export class User extends BaseEntity {
   id!: number;
 
   @Field()
+  @Column({ unique: true })
+  @IsEmail()
+  email!: string;
+
+  @Field()
   @Column()
-  username!: string;
+  firstname!: string;
+
+  @Field()
+  @Column()
+  lastname!: string;
 
   @Field()
   @Column()
   password!: string;
 
-  @Field(() => [SampleLetter], { nullable: true }
-  )
-  @OneToMany(
-    () => SampleLetter,
-    (sampleLetter) => sampleLetter.user
-    , { eager: true }
-  )
+  @Field()
+  @Column("bool", { default: false })
+  confirmed!: boolean;
+
+  @Field(() => [SampleLetter], { nullable: true })
+  @OneToMany(() => SampleLetter, (sampleLetter) => sampleLetter.user, {
+    eager: true,
+  })
   sampleLetters?: SampleLetter[];
 }
 
 @InputType()
 export class UserInput extends BaseEntity {
+  @Field()
+  @Column()
+  email!: string;
 
   @Field()
   @Column()
-  username!: string;
+  firstname!: string;
+
+  @Field()
+  @Column()
+  lastname!: string;
 
   @Field()
   @Column()
@@ -40,14 +64,20 @@ export class UserInput extends BaseEntity {
 }
 @InputType()
 export class UserUpdateInput extends BaseEntity {
+  @Field({ nullable: true })
+  @Column()
+  email!: string;
 
   @Field({ nullable: true })
   @Column()
-  username!: string;
+  firstname!: string;
+
+  @Field({ nullable: true })
+  @Column()
+  lastname!: string;
 }
 @InputType()
 export class ResetPasswordInput extends BaseEntity {
-
   @Field({ nullable: true })
   @Column()
   password!: string;
