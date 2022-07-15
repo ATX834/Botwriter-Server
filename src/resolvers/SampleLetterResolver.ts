@@ -23,7 +23,7 @@ import generateFinalHtml from "../helpers/generateFinalHTML";
 import axios from "axios";
 import fs from "fs"
 
-const PDF_API_URL = "http://pdf_generator:8000"
+const PDF_API_URL = "http://pdf_api:8000"
 
 @Resolver()
 export class SampleLetterResolver {
