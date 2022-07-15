@@ -1,5 +1,6 @@
 import { Arg, ID, Mutation, Query, Resolver } from "type-graphql";
 import { getRepository } from "typeorm";
+import { decodeHTMLSpecialChar } from "../helpers/htmlSpecialChar";
 
 import { Hook, HookInput, HookUpdateInput } from "../models/Hook";
 

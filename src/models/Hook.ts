@@ -15,7 +15,10 @@ export class Hook extends BaseEntity {
     value!: string;
 
     @Field(() => [SampleLetter])
-    @ManyToMany(() => SampleLetter, sampleLetter => sampleLetter.hooks, { lazy: true, cascade: true })
+    @ManyToMany(() => SampleLetter, sampleLetter => sampleLetter.hooks, {
+        lazy: true,
+        cascade: true,
+    })
     @JoinTable({ name: "hook_sample_letter" })
     sampleLetters?: Array<SampleLetter>
 
@@ -36,4 +39,13 @@ export class HookUpdateInput {
     @Field({ nullable: true })
     @Column()
     value!: string;
+}
+
+@InputType()
+export class MarkerInput { 
+    @Field()
+    value: string; 
+
+    @Field()
+    input: string; 
 }

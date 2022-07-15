@@ -38,26 +38,31 @@ export class UserResolver {
     @Arg("firstname") firstname: string,
     @Arg("lastname") lastname: string
   ): Promise<User | Error> {
-    if (await this.userRepository.findOne({ email })) {
-      throw new Error("User already exists");
+    try {
+      if (await this.userRepository.findOne({ email })) {
+        throw new Error("User already exists");
+      }
+      password = await bcrypt.hash(password, bcrypt.genSaltSync(14));
+
+      const validateUrl = await createTokenUrl(email, "/user/confirm");
+      const mail: MailType = {
+        from: "noreply@genLDM.com",
+        to: email,
+        subject: "Account confirmation genLDM",
+        text: "Please visit the following url to confirm your new account",
+        html: `<p>Please visit the following url to confirm your new account</p><a href="${validateUrl}">${validateUrl}</a>`, // html body
+      };
+
+      sendMail(mail);
+
+      const newUser = { email, password, firstname, lastname };
+      const user = this.userRepository.create(newUser);
+      await user.save();
+
+      return user;
+    } catch (e) {
+      console.log(e);
     }
-    password = await bcrypt.hash(password, bcrypt.genSaltSync(14));
-
-    const validateUrl = await createTokenUrl(email, "/user/confirm");
-    const mail: MailType = {
-      from: "noreply@genLDM.com",
-      to: email,
-      subject: "Account confirmation genLDM",
-      text: "Please visit the following url to confirm your new account",
-      html: `<p>Please visit the following url to confirm your new account</p><a href="${validateUrl}">${validateUrl}</a>`, // html body
-    };
-
-    await sendMail(mail);
-
-    const newUser = { email, password, firstname, lastname };
-    const user = this.userRepository.create(newUser);
-    await user.save();
-    return user;
   }
 
   @Mutation(() => User!, { nullable: true })
@@ -143,38 +148,41 @@ export class UserResolver {
     @Arg("email") email: string,
     @Arg("password") password: string
   ): Promise<string | null | Error> {
-    let user = await this.userRepository.findOne({ email });
-    if (user) {
-      if (!user.confirmed) {
-        throw new Error("You have to confirm your account");
-      }
-      if (await bcrypt.compare(password, user.password)) {
-        const accessToken = jwt.sign(
-          {
-            email: user.email,
-            id: user.id,
-            firstname: user.firstname,
-            lastname: user.lastname,
-          },
-          this.jwtKeyLogin,
-          { expiresIn: 900 }
-        );
+    try{
+      let user = await this.userRepository.findOne({ email });
+      if (user) {
+        if (!user.confirmed) {
+          throw new Error("You have to confirm your account");
+        }
+        if (await bcrypt.compare(password, user.password)) {
+          const accessToken = jwt.sign(
+            {
+              email: user.email,
+              id: user.id,
+              firstname: user.firstname,
+              lastname: user.lastname,
+            },
+            this.jwtKeyLogin,
+            { expiresIn: "7 days" }
+          );
 
-        return accessToken;
+          return accessToken;
+        } else {
+          return null;
+        }
       } else {
         return null;
       }
-    } else {
-      return null;
+    } catch(e) {
+      console.log(e)
     }
   }
 
   @Mutation(() => Boolean)
   async resendMailConfirmation(@Arg("email") email: string): Promise<boolean> {
+    const user = await this.userRepository.findOne({ email });
 
-    const user = await this.userRepository.findOne({email})
-
-    if(user && !user.confirmed) {
+    if (user && !user.confirmed) {
       const validateUrl = await createTokenUrl(email, "/user/confirm");
       const mail: MailType = {
         from: "noreply@genLDM.com",
@@ -183,9 +191,9 @@ export class UserResolver {
         text: "Please visit the following url to confirm your new account",
         html: `<p>Please visit the following url to confirm your new account</p><a href="${validateUrl}">${validateUrl}</a>`, // html body
       };
-  
+
       await sendMail(mail);
-      return true
+      return true;
     }
 
     return false;

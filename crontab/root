@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# min hour day month weekday command
+* * * * * /bin/date --rfc-2822 >> /var/log/cron.log
+*/15 * * * * rm -rf /tmp/files/* >> /var/log/cron.log 2>&1

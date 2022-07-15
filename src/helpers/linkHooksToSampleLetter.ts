@@ -1,13 +1,13 @@
 import { getRepository } from "typeorm";
-import { Hook } from "../models/Hook";
+import { Hook, HookInput } from "../models/Hook";
 import { InsertHookSampleLetterQuery } from "../types/InsertHookSampleLetterQuery";
 
-export default function linkHooksToSampleLetter(hooks: Hook[], sampleLetterId: number, insertIntoHookSampleLetterTable: InsertHookSampleLetterQuery) {
+export default function linkHooksToSampleLetter(hooks: HookInput[], sampleLetterId: number, insertIntoHookSampleLetterTable: InsertHookSampleLetterQuery) {
 
     const hookRepository = getRepository(Hook)
 
     hooks.forEach(async (hook: Hook) => {
-
+        
         let dbHook = await hookRepository.findOne({ 'where': { 'value': hook.value } })
 
         if (!dbHook) {
@@ -15,7 +15,6 @@ export default function linkHooksToSampleLetter(hooks: Hook[], sampleLetterId: n
             dbHook = await hookRepository.create(hook).save()
 
         }
-
         await insertIntoHookSampleLetterTable(sampleLetterId, dbHook.id);
     })
 }

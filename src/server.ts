@@ -3,23 +3,26 @@ console.time("Import processing time");
 
 import "reflect-metadata";
 import path from "path";
-import { ApolloServer } from "apollo-server";
+import express from "express"
+import cors from 'cors'
+import { ApolloServer } from "apollo-server-express";
 import { createConnection } from "typeorm";
 import { buildSchema } from "type-graphql";
+import { customAuthChecker } from "./auth";
+import { config } from "./config/config";
 import { UserResolver } from "./resolvers/UserResolver";
 import { SampleLetterResolver } from "./resolvers/SampleLetterResolver";
 import { HookResolver } from "./resolvers/HookResolver";
-import { customAuthChecker } from "./auth";
-import { config } from "./config/config";
+
 
 console.timeEnd("Import processing time");
-export async function bootstrap() {
+async function bootstrap() {
   await createConnection({
     type: config.server as "mysql",
     url: `${config.server}://${config.dbUser}:${config.dbPass}@${config.dbHost}/${config.db}`,
     entities: [path.resolve(__dirname, "./models/*.{ts,js}")],
     synchronize: true,
-    // logging: ["query"] /* Uncomment to log SQL query in server logs */
+    // logging: ["query"] /* Uncomment to log SQL query in server logs */,
   });
 
   const schema = await buildSchema({
@@ -27,20 +30,38 @@ export async function bootstrap() {
     authChecker: customAuthChecker,
   });
 
+  const app = express()
+
+  app.use(cors());
+  app.use(express.json())
+
   const server = new ApolloServer({
     schema,
-    context: ({ req, res }) => {
-      const token = req.headers['authorization'].replace("Bearer ", '')
-      
+    context: async ({ req, res }) => {
+      const token = req.headers["authorization"].replace("Bearer ", "");
       return {
         token,
         user: null,
-        res
+        res,
       };
     },
   });
-  const { url } = await server.listen(config.port);
-  console.log(`Server is running, GraphQL Playground available at ${url}`);
+
+
+
+  await server.start()
+  server.applyMiddleware({ app });
+
+  app.get("/files/:filename", (req, res) => {
+    res.download(process.env.FILES_PATH + req.params.filename, `${new Date().toISOString()}_new.pdf`)
+  });
+
+  const url = `http://localhost:${config.port}${server.graphqlPath}`
+  app.listen({ port: 4000 }, () =>
+    console.log(`🚀 Server is running, GraphQL Playground available at ${url} `)
+  );
+
+
 }
 
 console.time("Server bootstraping time");

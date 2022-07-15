@@ -38,9 +38,16 @@ export class User extends BaseEntity {
   confirmed!: boolean;
 
   @Field(() => [SampleLetter], { nullable: true })
-  @OneToMany(() => SampleLetter, (sampleLetter) => sampleLetter.user, {
-    eager: true,
-  })
+  @OneToMany(
+    () => SampleLetter,
+    (sampleLetter) => sampleLetter.user,
+    {
+      eager: true,
+      cascade: true,
+      // onDelete: "CASCADE",
+      // onUpdate: "CASCADE",
+    },
+  )
   sampleLetters?: SampleLetter[];
 }
 

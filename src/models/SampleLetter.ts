@@ -16,15 +16,15 @@ export class SampleLetter extends BaseEntity {
     title!: string;
 
     @Field()
-    @Column()
-    text!: string;
+    @Column("longtext")
+    content!: string;
 
     @Field(() => User)
-    @ManyToOne(() => User, user => user.sampleLetters, { lazy: true })
+    @ManyToOne(() => User, user => user.sampleLetters, { lazy: true, onDelete: "CASCADE" },)
     user!: User;
 
     @Field(() => [Hook])
-    @ManyToMany(() => Hook, hook => hook.sampleLetters, { lazy: true })
+    @ManyToMany(() => Hook, hook => hook.sampleLetters, { lazy: true, onDelete: "CASCADE" })
     hooks?: Array<Hook>;
 
     public set newHook(hook: Hook) {
@@ -39,9 +39,13 @@ export class SampleLetterInput {
     @Column()
     title!: string;
 
+    @Field(() => User)
+    @ManyToOne(() => User, user => user.sampleLetters, { lazy: true })
+    user!: User;
+
     @Field()
-    @Column()
-    text!: string;
+    @Column("longtext")
+    content!: string;
 }
 
 @InputType()
@@ -51,6 +55,6 @@ export class SampleLetterUpdateInput {
     title!: string;
 
     @Field({ nullable: true })
-    @Column()
-    text!: string;
+    @Column("longtext")
+    content!: string;
 }

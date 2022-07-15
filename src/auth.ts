@@ -11,15 +11,15 @@ export const customAuthChecker = async ({ root, args, context, info }) => {
         if (!decoded.id) {
             return false;
         }
-
+        
         const user = await userRepository.findOne(decoded.id);
         if (!user) {
             return false;
         }
-
+        
         context.user = user;
         return true;
-    } catch (err) {
+    } catch (e) {
         return false;
     }
 }
