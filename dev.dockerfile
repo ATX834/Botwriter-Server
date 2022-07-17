@@ -7,7 +7,7 @@ COPY *.json ./
 COPY .env.dist .env
 COPY src src
 
-ENV WEBSITE_URL=https://bot-writer.com
+ENV WEBSITE_URL=http://localhost:3000
 
 RUN npm install
 
